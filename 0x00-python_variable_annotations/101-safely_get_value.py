@@ -15,6 +15,9 @@ T = TypeVar('T')
 def safely_get_value(
         dct: Mapping, key: Any, default: Union[T, None] = None
         ) -> Union[None, T]:
+    """
+    Annotate function parameters and return values with the help of TypeVar
+    """
     if key in dct:
         return dct[key]
     else:
@@ -26,4 +29,4 @@ if __name__ == '__main__':
 
     print("Here's what the mappings should look like")
     for k, v in annotations.items():
-        print( ("{}: {}".format(k, v)))
+        print(("{}: {}".format(k, v)))
