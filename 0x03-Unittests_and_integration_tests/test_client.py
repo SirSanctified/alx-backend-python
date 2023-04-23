@@ -4,6 +4,7 @@ Test client
 """
 
 import unittest
+from typing import Dict
 from unittest.mock import patch, PropertyMock, Mock
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
@@ -55,6 +56,17 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(test_class.public_repos(), ["test"])
             mock_public_repos_url.assert_called_once()
             mock_get_json.assert_called_once_with("test")
+
+    @parameterized.expand([
+        ({"license": {"key": "my_license"}}, "my_license"),
+        ({"license": {"key": "other_license"}}, "other_license")
+    ])
+    def test_has_license(self, repo: Dict[str, Dict], license_key: str):
+        """
+        Test that GithubOrgClient.has_license returns the correct value
+        """
+        test_class = GithubOrgClient("google")
+        self.assertEqual(test_class.has_license(repo, license_key), True)
 
 
 if __name__ == '__main__':
