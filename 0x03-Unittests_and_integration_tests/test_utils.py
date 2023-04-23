@@ -6,7 +6,7 @@ that the method returns what it is supposed to.
 
 import unittest
 from parameterized import parameterized
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 from typing import Mapping, Sequence, Any
 from unittest.mock import patch, Mock
 
@@ -67,6 +67,34 @@ class TestGetJson(unittest.TestCase):
         """
         mock_get.return_value.json.return_value = test_payload
         self.assertEqual(get_json(test_url), test_payload)
+
+
+class TestMemoize(unittest.TestCase):
+    """
+    Test the memoize function
+    """
+    def test_memoize(self):
+        """
+        Test that when calling a_property twice, the correct result
+        is returned but a_method is only called once using
+        assert_called_once
+        """
+        class TestClass:
+            """ Test Class """
+            def a_method(self):
+                """ a method """
+                return 42
+            
+            @memoize
+            def a_property(self):
+                """ a property """
+                return self.a_method()
+        
+        with patch.object(TestClass, 'a_method', return_value=42) as mock:
+            test = TestClass()
+            test.a_property
+            test.a_property
+            mock.assert_called_once()
 
 
 if __name__ == "__main__":
