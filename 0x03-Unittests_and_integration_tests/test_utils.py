@@ -6,8 +6,9 @@ that the method returns what it is supposed to.
 
 import unittest
 from parameterized import parameterized
-from utils import access_nested_map
+from utils import access_nested_map, get_json
 from typing import Mapping, Sequence, Any
+from unittest.mock import patch, Mock
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -44,6 +45,28 @@ class TestAccessNestedMap(unittest.TestCase):
         with self.assertRaises(KeyError) as e:
             access_nested_map(nested_map, path)
             self.assertEqual(e.exception, KeyError(path[-1]))
+
+
+class TestGetJson(unittest.TestCase):
+    """
+    Test the get_json method
+    """
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False}),
+    ])
+    @patch('requests.get')
+    def test_get_json(
+        self,
+        test_url: str,
+        test_payload: Mapping,
+        mock_get: Mock
+    ):
+        """
+        Test the get_json method
+        """
+        mock_get.return_value.json.return_value = test_payload
+        self.assertEqual(get_json(test_url), test_payload)
 
 
 if __name__ == "__main__":
